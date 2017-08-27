@@ -1,0 +1,36 @@
+version: "3.0"
+services:
+    nginx:
+        image: 'nginx:1.13'
+        restart: always
+        ports:
+            - '80:80'
+        links:
+            - phpfpm
+        volumes:
+            - "./nginx:/etc/nginx/conf.d"
+            - "./www:/var/www"
+        depends_on:
+            - phpfpm
+    phpfpm:
+        image: 'php:7.1-fpm'
+        restart: always
+        links:
+            - mysqldb
+        volumes:
+            - "./www:/var/www"
+        depends_on:
+            - mysqldb
+    mysqldb:
+        image: 'mysql:5.7'
+        restart: always
+        ports:
+            - '3306:3306'
+        volumes:
+            - "./mysql/data:/var/lib/mysql"
+        environment:
+            - MYSQL_DATABASE=databasename
+            - MYSQL_ROOT_PASSWORD=rootpassword
+            - MYSQL_USER=username
+            - MYSQL_PASSWORD=password
+
